@@ -7,6 +7,7 @@ env:
     AWS_REGION: us-east-1
     ECR_REPO_URL: 311964230334.dkr.ecr.us-east-1.amazonaws.com
     EC2_INSTANCE_ID: i-0e0d5c37103a5f81c
+    APP_PORT: 8080
 
 phases:
   install:
@@ -64,4 +65,4 @@ phases:
           docker pull $ECR_REPO_URL/$IMAGE_NAME:latest && 
           docker stop $IMAGE_NAME || true && 
           docker rm $IMAGE_NAME || true && 
-          docker run -d --name $IMAGE_NAME -p 8080:8080 $ECR_REPO_URL/$IMAGE_NAME:latest"
+          docker run -d --name $IMAGE_NAME -p $APP_PORT:$APP_PORT $ECR_REPO_URL/$IMAGE_NAME:latest"
