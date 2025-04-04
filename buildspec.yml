@@ -14,6 +14,7 @@ phases:
       java: corretto17
     commands:
       - echo Instalando dependencias...
+      - chmod +x ./mvnw
       - yum install -y git
   pre_build:
     commands:
