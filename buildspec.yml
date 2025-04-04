@@ -29,7 +29,16 @@ phases:
       - docker tag $IMAGE_NAME:latest $ECR_REPO_URL/$IMAGE_NAME:latest
   post_build:
     commands:
-      - echo Subiendo imagen a Amazon ECR...
-      - docker push $ECR_REPO_URL/$IMAGE_NAME:latest
       - echo Desplegando en EC2 con SSM...
-      - aws ssm send-command --document-name "AWS-RunShellScript" --comment "Despliegue Quarkus" --instance-ids "$EC2_INSTANCE_ID" --region "$AWS_REGION" --parameters commands="docker pull $ECR_REPO_URL/$IMAGE_NAME:latest && docker stop $IMAGE_NAME || true && docker rm $IMAGE_NAME || true && docker run -d --name $IMAGE_NAME -p 8080:8080 $ECR_REPO_URL/$IMAGE_NAME:latest"
+      - >
+        aws ssm send-command 
+        --document-name "AWS-RunShellScript" 
+        --comment "Despliegue Quarkus" 
+        --instance-ids "$EC2_INSTANCE_ID" 
+        --region "$AWS_REGION" 
+        --parameters commands="
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO_URL && 
+          docker pull $ECR_REPO_URL/$IMAGE_NAME:latest && 
+          docker stop $IMAGE_NAME || true && 
+          docker rm $IMAGE_NAME || true && 
+          docker run -d --name $IMAGE_NAME -p 8080:8080 $ECR_REPO_URL/$IMAGE_NAME:latest"
