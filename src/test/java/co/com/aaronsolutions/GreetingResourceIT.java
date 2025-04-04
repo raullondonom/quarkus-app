@@ -1,4 +1,4 @@
-package org.acme;
+package co.com.aaronsolutions;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
